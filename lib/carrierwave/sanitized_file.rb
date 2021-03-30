@@ -3,7 +3,7 @@
 require 'pathname'
 require 'active_support/core_ext/string/multibyte'
 require 'mime/types'
-require 'mimemagic'
+require 'marcel'
 
 module CarrierWave
 
@@ -247,7 +247,7 @@ module CarrierWave
     def content_type
       @content_type ||=
         existing_content_type ||
-        mime_magic_content_type ||
+        marcel_magic_content_type ||
         mime_types_content_type
     end
 
@@ -314,10 +314,10 @@ module CarrierWave
       end
     end
 
-    def mime_magic_content_type
+    def marcel_magic_content_type
       if path
         File.open(path) do |file|
-          MimeMagic.by_magic(file).try(:type) || 'invalid/invalid'
+          Marcel::Magic.by_magic(file).try(:type) || 'invalid/invalid'
         end
       end
     rescue Errno::ENOENT
